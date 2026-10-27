@@ -104,12 +104,65 @@ curl -X POST http://127.0.0.1:8915/v1/chat/completions \
 | 本机 DNS 污染 xfyun 域名 | 直连 `114.118.65.91` + Host/SNI |
 | 改 demo_server 后端口被旧进程占 | 先 `netstat -ano` + `taskkill` 再重启 |
 
-## 六、路线图
+## 六、第三轮：图像生成 websocket 协议 — 终局定案 ❌
+
+### 完整协议链（已还原）
+
+```java
+// DoImgViewModel.doImg(msg, w, h)
+LLM llm = LLMFactory.imageGeneration(w, h, LLMConfig.builder());
+llm.registerLLMCallbacks(new LLMCallbacks() {
+    onLLMResult(LLMResult r, Object o) { byte[] img = r.getImage(); /* 存 jpg */ }
+    onLLMError(LLMError e, Object o)   { /* getErrMsg() */ }
+});
+int ret = llm.arun(prompt, contextUuid);  // ret=0 = 提交成功
+```
+
+### 两套凭据 × 双通道 实测矩阵
+
+| 凭据 | 通道 | 结果 |
+|---|---|---|
+| 服务器下发 `998ba275` | HTTP chat | ✅ `code:0 Success`（唯一可用通道） |
+| 服务器下发 `998ba275` | SDK websocket chat (4.0Ultra) | ❌ `AppIdNoAuthError` |
+| 服务器下发 `998ba275` | SDK websocket image (tti) | ❌ `AppIdNoEnoughLicenceError` |
+| APK 硬编码 `34b86978` | SDK websocket image (tti) | ❌ `AppIdNoEnoughLicenceError`（同错误） |
+| APK 硬编码 `34b86978` | HTTP chat | ❌ `11200`（第一轮已测） |
+
+**结论**：`tti`（text-to-image）是讯飞**付费订阅的 SDK 专项许可**，该 app 开发者从未购买/已过期 ——
+即真实用户的「AI 绘画」功能也必然失败，不存在可提取的图像生成权益。此路封死。
+
+### 动态分析脚本（进程内直调，跳过全部 UI/登录）
+
+| 脚本 | 用途 |
+|---|---|
+| `bootstrap.js` | 注入凭据 + test token 到 SP → `initXf()` → `goMain()`（绕过 findConfig SSL 阻塞） |
+| `direct_img.js` | 进程内直调 `LLMFactory.imageGeneration(512,512).arun(prompt)`，回调存 `/sdcard/nbhook_img.jpg` |
+| `direct_chat.js` | 进程内直调 `LLM` domain=4.0Ultra chat |
+| `direct_img_old.js` | 用 APK 硬编码旧凭据重 init SDK 再出图（对照实验） |
+
+```bash
+frida -U -f com.nbahuihua.qyyd -l hook_spark.js -l bootstrap.js -l direct_img.js --timeout 90
+# 或 attach（app 已运行时）: frida -U -n "Nano Banana Trip" -l direct_img.js
+```
+
+### 动态环境坑位补充（第三轮）
+
+| 坑 | 解法 |
+|---|---|
+| 干扰 app `com.blackhole.hd1763494114` 反复复活抢前台 | `pm disable-user --user 0`（uninstall 会被某种机制重装） |
+| Dreamerland / RemakeFace 等旧分析 app 自启顶前台 | 全部 `am force-stop` |
+| 权限弹窗卡死 spawn（app 无法启动） | `am force-stop com.google.android.permissioncontroller` |
+| `adb install` 后包名被神秘力量卸载 | 重装即可（出现过 3 次） |
+| frida attach 找不到包名 | 用 display name：`frida -U -n "Nano Banana Trip"` |
+| 首启「软件使用提示」弹窗 | tap `540,1504`（同意） |
+| 关键 UI 坐标 | AI绘画入口 `361,700` · prompt 框 `554,628` · AI生成 `540,1827` |
+
+## 七、路线图
 
 - [x] 第一轮：静态逆向 + 协议还原 + mock demo + 压测
 - [x] 第二轮：模拟器动态运行 + findConfig RSA 解密 + HTTP 真实链路打通（chat 全通）
-- [ ] 第三轮：图像生成 websocket 协议抓取（`hook_spark.js` 已就绪，需模拟器 + Frida spawn 触发出图）
-- [ ] 第四轮：移植进 new-api 渠道适配器（type 68+，参照 `relay/channel/kilwa/` 模板）
+- [x] 第三轮：图像生成 websocket 协议抓取 — **终局：两套凭据均无 tti 许可，图像功能封死**（详见第六节）
+- [ ] 第四轮：移植进 new-api 渠道适配器（仅 chat 能力，type 68+，参照 `relay/channel/kilwa/` 模板）
 
 ## License
 

@@ -1,0 +1,28 @@
+nbmi8vp4pv Nb7i90rpo2TM
+{
+ "success": true,
+ "code": 20000,
+ "message": "ÓÃ»§µÇÂ¼",
+ "data": {
+  "userVo": {
+   "token": "eyJhbGciOiJSUzI1NiJ9.eyJpZCI6MjExNDg4NTE5MTYxMjAwMjMwNCwidXNlcm5hbWUiOiJuYm1pOHZwNHB2IiwiYXBwUGFja2FnZSI6ImNvbS5uYmFodWlodWEucXl5ZCIsImFwcGxpY2F0aW9uIjoiYWljaGF0IiwiZXhwIjoxNzkzMDcwMDk3fQ.kS5QCFC5rT_wdrQ4RT0iy6E-KcXC0-AZAf8YacZOdBxHWWhmJFF0VFwG7Pizuoz93Z3SRJ6khrY3L46rtvubapN9cM2EG-_R53TTRGCy_i41ot1OeOjlifyiOBjWPc_i21EVcEi05sSNOSBwirIyNwaRxoba7v-pU8CaZHEERNw",
+   "openid": null,
+   "productFeature": null,
+   "config": {
+    "id": null,
+    "deviceName": null,
+    "isCharge": 1,
+    "isAd": null,
+    "isAlipay": 1,
+    "isWchat": 1,
+    "isPayid": null,
+    "kfqq": "740136894@qq.com",
+    "wxAppid": "wx50e0259aefda6a1b"
+   },
+   "map": {
+    "isAlipay": "1",
+    "isCharge": "1"
+   }
+  }
+ }
+}
