@@ -1,0 +1,19 @@
+package com.haichuang.img.utils;
+
+import android.util.Base64;
+import com.alipay.sdk.m.p.d;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import javax.crypto.Cipher;
+
+/* JADX INFO: loaded from: classes2.dex */
+public class RsaUtils {
+    public static String decrypt(String encryptedData) throws Exception {
+        PrivateKey privateKeyGeneratePrivate = KeyFactory.getInstance(d.a).generatePrivate(new PKCS8EncodedKeySpec(Base64.decode("MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCfcAEA2ltOUVJFd7mES8+RSAwvqXsyw7APTkuhvaTRPm3DkHQz/yc0sKHrKx8v1MfWsbr9zvI8fAdNVGokNME3aitM3MHxrEAi92yIu8DwZIQeHP+amvHvGcrNMJZWPTmZz6OUSWT8CwQPhCpmiKtQrz+q8bi0k7MwOvHFx4njNu0pdtPoM8DIV6yJqvomitpKsRCkeFZ0brOxPFoxf6qJ4/u30BmIkPpw3FX3l9V70/NRrnfHWKvPvx1iF79aEbL3+HDUJLSQxdEnwr0Oa3rhepDpxTHNnwOscOoMvvs0e3DnLKx/iP49FeyDDa3xYVXUvEUf8/PgYscRFcXUT9q7AgMBAAECggEAS/zyzXhEmiASCP/V0GLda82d2T16dShlCfZz/4NGQV/yqol3iKyr/+XLViz4MTDFieKtT3hJZWBrjoSUDeuCxyl3t6tjWA6ThtbLyKNLgoc1nLCPdh0w/5cYXBEzJakKge8/dFZCpgmOBuMj3jh3Bf5wZsXMFWxrs6n0PyIp6rsrCQUhq47UZP9N2McJpD7GGIlRIR8kVolh5ipD7RcaXgxW86SKvzuL/BM8g5rAMvaenGEvZkC63GscJYe0OEFfsCrUTuUQhnOi9gUjs/pmdDOX/NPnYcbER+hfPXv2tLnxLbBuhS/Xc5gk4HB8Mrx5ZduoP9dW9LnyShaVpz/rmQKBgQDWDO8NwW4/3059kt3PJvGZS2p/exbaOT5SA5xKej6yr+6RXa8Ks4hHc8mEbUpA/ZBfcDyxl+FM6RV0COXXCeRpD0IGJ23AXfZpPapjxGqPDcEKYlHoVgfXTrFEnW9c8znc5cYL8fzP942f/KVu4ixOKD1BAvY1jMS7aOXwMs3x7QKBgQC+rxjNuh9B81czqvk+BNUbIzpTNpLzwVFXj1kd2+4rSbAinPq0ulh6A3brOCtfMG/W1U7UGTiyChPeNPp0sYgTVgis5mtPaCPJsdqR8lSyTZTa9+ZCANaiSr6+U7jJbwI9oazyUZVKFcUTfBgAvnBb912VfzCmayYQrDAAIuiKRwKBgBNciCMOZBKS+F6TckzSkPf0wmVVlPOYSfLRMMnr1NAE6edsOfEV3DXaW1gHKrhGN1DqrhLCUjbKvo4IYAHbezWlk6tK1bqYxTkvwsHTenAGJnfx/MavQXZQP+ic9P3LYmiAwDFEakHFeqIGEFC/VJKdQS0oP20IlqL9Eg9wCQDhAoGARIglv/q+tTNCCf3O6m1OMhytH68jjZvTIkcQ3lxm8wPe2/HTYRUAK4oHOW7Ml7+O0oWDeVM/Py3ECj68LSiJIXnwUEPYGYfyJNFZHs8bhaHAeBpUlTA788QtXbY1WaAeDAyJXeXYY/IDDIezEMFhHIyBA/PchlNIMQHRlpr1PI0CgYEAs0gj8VYxoXc39Cp4kG6SAZpQiko8BzCXdzWLIo88mliI3u0QCu6g36zcK0LXByogo7+zXYrL03lqGL1I5G/1Sch0yJ6A/CeBTQLXVmGQIANPSp+lAJCGt7B+sA/+01Zp45vv4mlzecz7DsZCCvGgDikuyy0qLIE34Ecv5Ajpdn0=", 0)));
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(2, privateKeyGeneratePrivate);
+        return new String(cipher.doFinal(Base64.decode(encryptedData, 0)), StandardCharsets.UTF_8);
+    }
+}

@@ -1,0 +1,7 @@
+jadx-out/
+apk-unzip/
+*.apk
+*.log
+ui*.xml
+__pycache__/
+*.png
